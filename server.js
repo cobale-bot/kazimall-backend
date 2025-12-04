@@ -9,26 +9,31 @@ const adapter = new JSONFile("db.json");
 const db = new Low(adapter, { technicians: [], bookings: [] });
 await db.read();
 
-app.get("/", (req, res) => res.json({ status: "KaziMall Backend Running" }));
+// ROOT ENDPOINT
+app.get("/", (req, res) => {
+  res.json({ status: "KaziMall Backend Running" });
+});
 
-// GET technicians
-app.get("/technicians", (req, res) => {
+// GET ALL TECHNICIANS
+app.get("/technicians", async (req, res) => {
+  await db.read();
   res.json(db.data.technicians);
 });
 
-// POST technician
+// ADD TECHNICIAN
 app.post("/technicians", async (req, res) => {
   db.data.technicians.push(req.body);
   await db.write();
   res.json({ success: true });
 });
 
-// GET bookings
-app.get("/bookings", (req, res) => {
+// GET ALL BOOKINGS
+app.get("/bookings", async (req, res) => {
+  await db.read();
   res.json(db.data.bookings);
 });
 
-// POST booking
+// ADD BOOKING
 app.post("/bookings", async (req, res) => {
   db.data.bookings.push(req.body);
   await db.write();
