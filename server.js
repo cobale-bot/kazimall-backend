@@ -11,12 +11,24 @@ await db.read();
 
 app.get("/", (req, res) => res.json({ status: "KaziMall Backend Running" }));
 
+// GET technicians
+app.get("/technicians", (req, res) => {
+  res.json(db.data.technicians);
+});
+
+// POST technician
 app.post("/technicians", async (req, res) => {
   db.data.technicians.push(req.body);
   await db.write();
   res.json({ success: true });
 });
 
+// GET bookings
+app.get("/bookings", (req, res) => {
+  res.json(db.data.bookings);
+});
+
+// POST booking
 app.post("/bookings", async (req, res) => {
   db.data.bookings.push(req.body);
   await db.write();
