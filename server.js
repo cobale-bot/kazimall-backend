@@ -1,41 +1,45 @@
-import express from "express";
-import { Low } from "lowdb";
-import { JSONFile } from "lowdb/node";
+const express = require("express");
+const cors = require("cors");
 
 const app = express();
+app.use(cors());
 app.use(express.json());
 
-// Load db.json using LowDB
-const adapter = new JSONFile("db.json");
-const db = new Low(adapter);
+let technicians = [
+  {
+    id: 1,
+    name: "John Doe",
+    skill: "Electrician",
+    phone: "0712345678",
+    rating: 4.5
+  },
+  {
+    id: 2,
+    name: "Jane Smith",
+    skill: "Plumber",
+    phone: "0798765432",
+    rating: 4.8
+  }
+];
 
-// Ensure db has default structure
-await db.read();
-db.data ||= { technicians: [], bookings: [] };
-
-// ROOT ROUTE
 app.get("/", (req, res) => {
   res.json({ status: "KaziMall Backend Running" });
 });
 
-// GET all technicians
-app.get("/technicians", async (req, res) => {
-  res.json(db.data.technicians);
+// GET technicians
+app.get("/technicians", (req, res) => {
+  res.json(technicians);
 });
 
-// ADD a technician
-app.post("/technicians", async (req, res) => {
-  db.data.technicians.push(req.body);
-  await db.write();
-  res.json({ success: true });
+// ADD technician
+app.post("/technicians", (req, res) => {
+  const newTech = {
+    id: technicians.length + 1,
+    ...req.body
+  };
+  technicians.push(newTech);
+  res.status(201).json(newTech);
 });
 
-// ADD a booking
-app.post("/bookings", async (req, res) => {
-  db.data.bookings.push(req.body);
-  await db.write();
-  res.json({ success: true });
-});
-
-// Start server
-app.listen(3000, () => console.log("Backend running on port 3000"));
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => console.log(`Backend running on port ${PORT}`));
